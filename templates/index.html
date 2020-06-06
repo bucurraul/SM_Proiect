@@ -1,9 +1,26 @@
 <html>
-  <head>
-    <title>Video Streaming Demonstration</title>
-  </head>
-  <body>
-    <h1>Video Streaming Demonstration</h1>
-    <img id="bg" src="{{ url_for('video_feed') }}">
-  </body>
+    <head>
+        <title>Video Streaming Demonstration</title>
+
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}"/>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}"/>
+    </head>
+    <body>
+        <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+        <h1>Video Streaming Demonstration</h1>
+
+        <img id="bg" src="{{ url_for('video_feed') }}">
+
+        <h3>Servo control</h3>
+
+        <label for="degrees">Grade</label>
+        <input type="range" id="degrees" value="90" min="0" max="180" onchange="updateDegreesBox(this.value);"/>
+        <input type="number" id="degrees_box" value="90" disabled>
+        <br/>
+
+        <button onclick="sendServoRequest('left')">&lt;</button>
+        <button onclick="sendServoRequest('right')">&gt;</button>
+    </body>
 </html>
