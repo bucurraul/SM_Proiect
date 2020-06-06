@@ -5,7 +5,7 @@ function sendServoRequest(direction) {
         type: 'POST',
         url: '/servo',
         data: {
-            'direction': 'left',
+            'direction': direction,
             'degrees': $('#degrees').value
         },
         success: (data) => {
