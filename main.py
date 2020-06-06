@@ -1,6 +1,6 @@
 # main.py
 # import the necessary packages
-from flask import Flask, render_template, Response, redirect
+from flask import Flask, render_template, Response, redirect, request
 from camera import VideoCamera
 import RPi.GPIO as GPIO
 
@@ -8,7 +8,6 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.OUT)
 servo1 = GPIO.PWM(26,50)
 servo1.start(0)
-last_angle = 0
 
 app = Flask(__name__)
 
@@ -19,32 +18,13 @@ def index():
 def trans_from_degrees(angle):
     return (angle/18.0) + 2.5
     
-@app.route('/servo', methods=['POST','GET'])
+@app.route('/servo', methods=['POST'])
 def get_dir():
-    global last_angle
-    
-    direction = request.form['direction']
     angle = int(request.form['degrees'])
+    duty = trans_from_degrees(angle)
+    servo1.ChangeDutyCycle(duty)
     
-    if direction == "right":
-        angle = last_angle + angle
-        if angle <= 180:
-            duty = trans_from_degrees(angle)
-            last_angle = angle
-        else:
-            duty = trans_from_degrees(last_angle)
-        servo1.ChangeDutyCycle(duty)
-    elif direction == "left":
-        angle = last_angle - angle
-        if angle >= 0:
-            duty = trans_from_degrees(angle)
-            last_angle = angle
-        else:
-            duty = trans_from_degrees(last_angle)
-        duty = trans_from_degrees(angle)
-        servo1.ChangeDutyCycle(duty)
-    
-    return redirect('/')
+    return "Ok"
 
 def gen(camera):
     while True:
@@ -55,8 +35,8 @@ def gen(camera):
 
 @app.route('/video_feed')
 def video_feed():
-    #return Response(gen(VideoCamera()),mimetype='multipart/x-mixed-replace; boundary=frame')
-    pass
+    return Response(gen(VideoCamera()),mimetype='multipart/x-mixed-replace; boundary=frame')
+
 if __name__ == '__main__':
     # defining server ip address and port
-    app.run(host='0.0.0.0',port='5000', debug=True)
+    app.run(host='0.0.0.0',port='5000', debug=False)
