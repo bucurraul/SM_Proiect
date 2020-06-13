@@ -2,12 +2,15 @@
 # import the necessary packages
 from flask import Flask, render_template, Response, redirect, request
 from camera import VideoCamera
+from threading import Lock
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(26, GPIO.OUT)
 servo1 = GPIO.PWM(26,50)
 servo1.start(0)
+
+lock = Lock()
 
 app = Flask(__name__)
 
@@ -26,17 +29,21 @@ def get_dir():
     
     return "Ok"
 
-def gen(camera):
+def gen():
     while True:
-        #get camera frame
+        lock.acquire()
+        camera = VideoCamera()
         frame = camera.get_frame()
-        yield (b'--frame\r\n'
+        res = (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        del camera
+        lock.release()
+        yield res
 
 @app.route('/video_feed')
 def video_feed():
-    return Response(gen(VideoCamera()),mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(gen(),mimetype='multipart/x-mixed-replace; boundary=frame')
 
 if __name__ == '__main__':
     # defining server ip address and port
-    app.run(host='0.0.0.0',port='5000', debug=False)
+    app.run(host='0.0.0.0',port='6969', debug=False)
