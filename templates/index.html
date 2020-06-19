@@ -9,15 +9,28 @@
         <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
-        <h1>Video Streaming Demonstration</h1>
+		<div class="hub">
+			<span>
+				<span>SM</span>
+				<span>labă</span>
+			</span>
+		</div>
 
-        <img id="bg" src="{{ url_for('video_feed') }}">
+        <img id="bg0" src="{{ url_for('video_feed0') }}">
+        <img id="bg1" src="{{ url_for('video_feed1') }}">
 
         <h3>Servo control</h3>
 
-        <label for="degrees">Grade</label>
-        <input type="range" id="degrees" value="90" min="0" max="180" onchange="updateDegreesBox(this.value);"/>
-        <input type="number" id="degrees_box" value="90" disabled>
+        <label for="degrees0">Unghi camera 0</label>
+        <input type="range" id="degrees0" value="90" min="0" max="180" onchange="updateDegreesBox(0, this.value);"/>
+        <input type="number" id="degrees_box0" value="90" disabled>
+        <button onclick="toggleLight(0)">LED 0</button>
+        <br/>
+
+        <label for="degrees0">Unghi camera 1</label>
+        <input type="range" id="degrees1" value="90" min="0" max="180" onchange="updateDegreesBox(1, this.value);"/>
+        <input type="number" id="degrees_box1" value="90" disabled>
+        <button onclick="toggleLight(1)">LED 1</button>
         <br/>
     </body>
 </html>
