@@ -3,6 +3,7 @@
 from flask import Flask, render_template, Response, redirect, request
 from camera import VideoCamera
 from threading import Lock
+import cv2
 import RPi.GPIO as GPIO
 
 GPIO.setmode(GPIO.BCM)
@@ -13,6 +14,8 @@ servo1.start(0)
 lock = Lock()
 
 app = Flask(__name__)
+
+video = cv2.VideoCapture(0)
 
 @app.route('/')
 def index():
@@ -31,13 +34,20 @@ def get_dir():
 
 def gen():
     while True:
+
         lock.acquire()
-        camera = VideoCamera()
-        frame = camera.get_frame()
+
+        ret, frame = video.read()
+            # frame = cv2.resize(frame, None, fx=ds_factor, fy=ds_factor,
+                           # interpolation=cv2.INTER_AREA)
+        ret, jpeg = cv2.imencode('.jpg', frame)
+
         res = (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        del camera
+               b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
+        # video.release()
+
         lock.release()
+
         yield res
 
 @app.route('/video_feed')
