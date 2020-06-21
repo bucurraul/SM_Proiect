@@ -23,7 +23,7 @@ function updateDegreesBox(servo, value) {
     console.log("Mesaj");
     $.ajax({
         type: 'POST',
-        url: '/servo' + servo,
+        url: '/servo/' + servo,
         data: {
             'degrees': $('#degrees' + servo).val()
         },
@@ -35,7 +35,7 @@ function updateDegreesBox(servo, value) {
 function toggleLight(number) {
     $.ajax({
         type: 'POST',
-        url: '/light' + number,
+        url: '/light/' + number,
         success: () => console.log("Toggle light OK")
     });
 }

@@ -9,28 +9,34 @@
         <script src="{{ url_for('static', filename='js/jquery.js') }}"></script>
         <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 
-		<div class="hub">
+		<nav class="hub">
 			<span>
 				<span>SM</span>
-				<span>labă</span>
+				<span>lab</span>
 			</span>
-		</div>
+		</nav>
 
-        <img id="bg0" src="{{ url_for('video_feed0') }}">
-        <img id="bg1" src="{{ url_for('video_feed1') }}">
+        <main class="container">
+            <div class="row">
+                {% for i in range(0, n_cameras) %}
+                <div class="col camera-controls">
+                    <h2>Camera {{ i }}</h2>
+                    <div class="row">
+                        <img id="bg{{ i }}" src="/video_feed/{{ i }}">
+                    </div>
 
-        <h3>Servo control</h3>
-
-        <label for="degrees0">Unghi camera 0</label>
-        <input type="range" id="degrees0" value="90" min="0" max="180" onchange="updateDegreesBox(0, this.value);"/>
-        <input type="number" id="degrees_box0" value="90" disabled>
-        <button onclick="toggleLight(0)">LED 0</button>
-        <br/>
-
-        <label for="degrees0">Unghi camera 1</label>
-        <input type="range" id="degrees1" value="90" min="0" max="180" onchange="updateDegreesBox(1, this.value);"/>
-        <input type="number" id="degrees_box1" value="90" disabled>
-        <button onclick="toggleLight(1)">LED 1</button>
-        <br/>
+                    <div class="controls">
+                        <h5>Angle</h5>
+                        <input class="w-25" type="number" id="degrees_box{{ i }}" value="90" disabled>
+                        <input type="range" id="degrees1" value="90" min="0" max="180" onchange="updateDegreesBox(1, this.value);"/>
+                    </div>
+                    <div class="controls">
+                        <h5>LED</h5>
+                        <button class="btn btn-light" onclick="toggleLight({{ i }})">Toggle</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </main>
     </body>
 </html>
