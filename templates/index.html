@@ -28,7 +28,7 @@
                     <div class="controls">
                         <h5>Angle</h5>
                         <input class="w-25" type="number" id="degrees_box{{ i }}" value="90" disabled>
-                        <input type="range" id="degrees1" value="90" min="0" max="180" onchange="updateDegreesBox(1, this.value);"/>
+                        <input type="range" id="degrees{{ i }}" value="90" min="0" max="180" onchange="updateDegreesBox({{ i }}, this.value);"/>
                     </div>
                     <div class="controls">
                         <h5>LED</h5>
