@@ -23,7 +23,7 @@ state_led = [False, False]
 
 app = Flask(__name__)
 
-camera = [cv2.VideoCapture(0), cv2.VideoCapture(1)]
+camera = [cv2.VideoCapture(1), cv2.VideoCapture(0)]
 
 angles = [90, 90]
 
@@ -39,19 +39,19 @@ def trans_from_degrees(angle):
     return (angle/18.0) + 2.5
 
 
-@app.route('/servo<n_camera>', methods=['POST'])
+@app.route('/servo/<n_camera>', methods=['POST'])
 def get_dir(n_camera):
     n = int(n_camera)
-    servo[n].start(0)
-    time.sleep(0.5)
+    # servo[n].start(0)
+    # time.sleep(0.5)
     angle = int(request.form['degrees'])
     angles[n] = angle
 
     duty = trans_from_degrees(180 - angle)
 
     servo[n].ChangeDutyCycle(duty)
-    time.sleep(0.5)
-    servo[n].stop()
+    # time.sleep(0.5)
+    # servo[n].stop()
     print('Changing angle to {} for camera {}'.format(angle, n))
 
     return "Ok"
@@ -62,10 +62,10 @@ def get_engals():
     return str(angles)
 
 
-@app.route('/light<n_camera>', methods=['POST'])
+@app.route('/light/<n_camera>', methods=['POST'])
 def lumina(n_camera):
     global state_led
-
+    print("QWE")
     n = int(n_camera)
 
     state_led[n] = not state_led[n]
@@ -83,12 +83,15 @@ def gen(video):
 
         _, frame = video.read()
 
+        if frame is None:
+            continue
+
         gray_scale = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         gray_scale = cv2.GaussianBlur(gray_scale, (21,21), 0)
 
         if first_frame is None:
             first_frame = gray_scale
-
+        
         frame_delta = cv2.absdiff(first_frame, gray_scale)
         threshold = cv2.threshold(frame_delta, 180, 255, cv2.THRESH_BINARY)[1]
 
@@ -131,7 +134,7 @@ if __name__ == '__main__':
     servo[1].ChangeDutyCycle(duty)
 
     time.sleep(2)
-    servo[0].stop()
-    servo[1].stop()
+    # servo[0].stop()
+    # servo[1].stop()
 
     app.run(host='0.0.0.0',port='6969', debug=False)
